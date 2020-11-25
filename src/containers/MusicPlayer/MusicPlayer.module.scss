@@ -1,0 +1,103 @@
+.musicPlayerPanel {
+  padding: 2rem .5rem;
+  margin-right: auto;
+  margin-left: auto;
+  width: 20rem;
+  height: 15rem;
+  background-color: #121212;
+  color: #fff;
+  box-sizing: border-box;
+
+  .audioplayer {
+    width: 100%;
+  }
+
+  button {
+    display: block;
+    appearance: none;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: .3s ease-out all;
+  }
+
+  .playButton {
+    position: relative;
+    margin-top: 1rem;
+    margin-right: auto;
+    margin-left: auto;
+    width: 3rem;
+    height: 3rem;
+    background-color: #b3b3b3;
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      width: 0;
+      height: 0;
+      border-top: 1rem solid transparent;
+      border-left: 1.5rem solid white;
+      border-bottom: 1rem solid transparent;
+      transform: translate(-.5rem, -1rem);
+      content: '';
+    }
+
+    &:hover {
+      background-color: darken(#b3b3b3, 15%);
+      transform: scale(1.1);
+    }
+  }
+
+  .pause {
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 30%;
+      display: block;
+      width: .5rem;
+      height: 2rem;
+      border: none;
+      background-color: white;
+      content: '';
+      transform: translate(-10%, -50%);
+    }
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      left: 55%;
+      display: block;
+      width: .5rem;
+      height: 2rem;
+      border: none;
+      background-color: white;
+      content: '';
+      transform: translate(-10%, -50%);
+    }
+  }
+
+  .timeline {
+    margin-top: 1.5rem;
+    margin-right: auto;
+    margin-left: auto;
+    width: 90%;
+    height: .5rem;
+    background: #fefefe;
+    border-radius: 1.5rem;
+  }
+
+  .playhead {
+    margin-top: 1rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    background-color: #b3b3b3;
+    transform: translateY(-25%);
+
+    &:hover {
+      background-color: darken(#b3b3b3, 15%);
+      transform: translateY(-25%) scale(1.1);
+    }
+  }
+}
