@@ -30,13 +30,42 @@ const MusicPlayer = (props) => {
     }
   }
 
+  const updatePlayheadPosition = (event) => {
+    const updatedPlayheadMargin = event.clientX - getPosition(timelineRef.current);
+    const timelineWidth = timelineRef.current.offsetWidth - playheadRef.current.offsetWidth;
+
+    if (updatedPlayheadMargin >= 0 && updatedPlayheadMargin <= timelineWidth) {
+      playheadRef.current.style.marginLeft = `${updatedPlayheadMargin}px`;
+    }
+    if (updatedPlayheadMargin < 0) {
+      playheadRef.current.style.marginLeft = '0px';
+    }
+    if (updatedPlayheadMargin > timelineWidth) {
+      playheadRef.current.style.marginLeft = `${timelineWidth}px`;
+    }
+  }
+
+  const clickPercentage = (event) => {
+    const timelineWidth = timelineRef.current.offsetWidth - playheadRef.current.offsetWidth;
+    const timelinePosition = getPosition(timelineRef.current);
+
+    return (event.clientX - timelinePosition) / timelineWidth;
+  }
+
+  const getPosition = (element) => element.getBoundingClientRect().left;
+
+  const timelineOnClickHandler = (event) => {
+    updatePlayheadPosition(event);
+    audioRef.current.currentTime = audioRef.current.duration * clickPercentage(event);
+  }
+
   return (
     <div className={ Styles.musicPlayerPanel }>
       <audio
         ref={ audioRef }
         onTimeUpdate={ onTimeUpdateHandler }
       >
-        <source src="https://www.w3schools.com/tags/horse.ogg" type="audio/mpeg" />
+        <source src="https://www.w3schools.com/tags/horse.mp3" type="audio/mpeg" />
       </audio>
       <div className={ Styles.audioplayer }>
         <button
@@ -44,7 +73,7 @@ const MusicPlayer = (props) => {
           id="play-button"
           onClick={ onChangePlayButton }
         />
-        <div ref={ timelineRef } className={ Styles.timeline }>
+        <div ref={ timelineRef } onClick={timelineOnClickHandler} className={ Styles.timeline }>
           <button ref={ playheadRef } className={ Styles.playhead } />
         </div>
       </div>
