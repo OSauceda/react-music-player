@@ -7,6 +7,9 @@ const MusicPlayer = (props) => {
   const playheadRef = useRef(null);
   const timelineRef = useRef(null);
 
+  /**
+   * Callback used to play or pause the music when clicking the big play button
+   */
   const onChangePlayButton = () => {
     if (audioRef.current.paused) {
       audioRef.current.play();
@@ -15,12 +18,15 @@ const MusicPlayer = (props) => {
       audioRef.current.pause();
       setIsPlaying(false);
     }
-
   }
 
-  const onTimeUpdateHandler = (e) => {
-    const { currentTime, duration } = e.target;
-    const timelineWidth = timelineRef.current.offsetWidth - playheadRef.current.offsetWidth;
+  /**
+   * Updates the playhead position in the timeline as the music plays
+   * @param {HTML DOM Event} event
+   */
+  const onTimeUpdateHandler = (event) => {
+    const { currentTime, duration } = event.target;
+    const timelineWidth = getTimelineWidth();
     const playPercentage = timelineWidth * (currentTime/duration);
 
     playheadRef.current.style.marginLeft = `${playPercentage}px`;
@@ -30,9 +36,13 @@ const MusicPlayer = (props) => {
     }
   }
 
+  /**
+   * Updates the playhead position whenever the user clicks somewhere in the timeline
+   * @param {HTML DOM Event} event
+   */
   const updatePlayheadPosition = (event) => {
-    const updatedPlayheadMargin = event.clientX - getPosition(timelineRef.current);
-    const timelineWidth = timelineRef.current.offsetWidth - playheadRef.current.offsetWidth;
+    const updatedPlayheadMargin = event.clientX - getElementPosition(timelineRef.current);
+    const timelineWidth = getTimelineWidth();
 
     if (updatedPlayheadMargin >= 0 && updatedPlayheadMargin <= timelineWidth) {
       playheadRef.current.style.marginLeft = `${updatedPlayheadMargin}px`;
@@ -45,19 +55,38 @@ const MusicPlayer = (props) => {
     }
   }
 
+  /**
+   * Based on the position where the user clicked in the timeline
+   * return the % relative to the timeline's total width
+   * @param {HTML DOM Event} event
+   */
   const clickPercentage = (event) => {
-    const timelineWidth = timelineRef.current.offsetWidth - playheadRef.current.offsetWidth;
-    const timelinePosition = getPosition(timelineRef.current);
+    const timelineWidth = getTimelineWidth();
+    const timelinePosition = getElementPosition(timelineRef.current);
 
     return (event.clientX - timelinePosition) / timelineWidth;
   }
 
-  const getPosition = (element) => element.getBoundingClientRect().left;
-
+  /**
+   * Callback for updating the playhead position in the timeline
+   * and updating the currentTime of the track
+   * @param {HTML DOM Event} event
+   */
   const timelineOnClickHandler = (event) => {
     updatePlayheadPosition(event);
     audioRef.current.currentTime = audioRef.current.duration * clickPercentage(event);
   }
+
+  /**
+   * Util function to get the position of any html element
+   * @param {HTML Element} element
+   */
+  const getElementPosition = (element) => element.getBoundingClientRect().left;
+
+  /**
+   * Util function to get the timeline html element width minus the playhead width
+   */
+  const getTimelineWidth = () => timelineRef.current.offsetWidth - playheadRef.current.offsetWidth;
 
   return (
     <div className={ Styles.musicPlayerPanel }>
@@ -73,7 +102,7 @@ const MusicPlayer = (props) => {
           id="play-button"
           onClick={ onChangePlayButton }
         />
-        <div ref={ timelineRef } onClick={timelineOnClickHandler} className={ Styles.timeline }>
+        <div ref={ timelineRef } onClick={ timelineOnClickHandler } className={ Styles.timeline }>
           <button ref={ playheadRef } className={ Styles.playhead } />
         </div>
       </div>
